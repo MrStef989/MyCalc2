@@ -1,8 +1,19 @@
-﻿using MyCalc2;
-namespace StringCalc.Tests
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using MyCalc2;
+namespace CalculatorApp.Tests
 {
+    [TestClass]
     public class PrioirtyTests
+
     {
+        private Calculator calculator;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            calculator = new Calculator();
+        }
         [TestMethod]
         public void Should_RespectPrecedenceOfOperations()
         {
@@ -25,7 +36,7 @@ namespace StringCalc.Tests
             var calculator = new Calculator();
 
             var result = calculator.Calculate("2 + 3 * 4 - 5 / 2");
-            Assert.AreEqual(12.5, result);
+            Assert.AreEqual(11.5, result);
         }
         [TestMethod]
         public void WithParentheses()

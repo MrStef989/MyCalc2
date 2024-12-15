@@ -1,11 +1,11 @@
-﻿// File: CalculatorTests.cs
-using Microsoft.VisualStudio.TestTools.UnitTesting; // Подключаем пространство имен калькулятора
+﻿
+using Microsoft.VisualStudio.TestTools.UnitTesting; 
 using System;
 using MyCalc2;
 namespace CalculatorApp.Tests
 {
     [TestClass]
-    public class CalculatorTests
+    public class BasicTests
     {
         private Calculator calculator;
 
