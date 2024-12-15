@@ -6,11 +6,25 @@ namespace MyCalc2
 {
     public class Calculator
     {
+        private readonly Symbols _symbols;
+        private readonly Converter _postfixConverter;
+        private readonly Evaluator _postfixEvaluator;
+        private readonly TokenValidator _tokenValidator;
+
+        public Calculator()
+        {
+            _symbols = new Symbols();
+            _postfixConverter = new Converter();
+            _postfixEvaluator = new Evaluator();
+            _tokenValidator = new TokenValidator(); // Инициализация TokenValidator
+        }
+
         public double Calculate(string expression)
         {
+            var tokens = _symbols.Tokenize(expression);
+            _tokenValidator.ValidateTokens(tokens); // Использование TokenValidator
 
-            var tokens = expression.Split(' ');
-            if (tokens.Length == 3)
+            if (tokens.Count == 3)
             {
                 var num1 = double.Parse(tokens[0]);
                 var num2 = double.Parse(tokens[2]);
@@ -26,130 +40,13 @@ namespace MyCalc2
                 };
             }
 
-
-            var postfix = ConvertToPostfix(expression);
-            return EvaluatePostfix(postfix);
+            var postfix = _postfixConverter.ConvertToPostfix(tokens);
+            return _postfixEvaluator.Evaluate(postfix);
         }
 
         public async Task<double> CalculateAsync(string expression)
         {
             return await Task.Run(() => Calculate(expression));
-        }
-
-        private List<string> ConvertToPostfix(string expression)
-        {
-            var output = new List<string>();
-            var operators = new Stack<string>();
-            var precedence = new Dictionary<string, int>
-            {
-                { "+", 1 },
-                { "-", 1 },
-                { "*", 2 },
-                { "/", 2 }
-            };
-
-            var tokens = Tokenize(expression);
-            foreach (var token in tokens)
-            {
-                if (double.TryParse(token, out _))
-                {
-                    output.Add(token);
-                }
-                else if (token == "(")
-                {
-                    operators.Push(token);
-                }
-                else if (token == ")")
-                {
-                    while (operators.Count > 0 && operators.Peek() != "(")
-                    {
-                        output.Add(operators.Pop());
-                    }
-                    operators.Pop();
-                }
-                else if (precedence.ContainsKey(token))
-                {
-                    while (operators.Count > 0 && precedence.ContainsKey(operators.Peek()) &&
-                           precedence[operators.Peek()] >= precedence[token])
-                    {
-                        output.Add(operators.Pop());
-                    }
-                    operators.Push(token);
-                }
-                else
-                {
-                    throw new InvalidOperationException($"Неизвестный токен: {token}");
-                }
-            }
-
-            while (operators.Count > 0)
-            {
-                output.Add(operators.Pop());
-            }
-
-            return output;
-        }
-
-        private double EvaluatePostfix(List<string> postfix)
-        {
-            var stack = new Stack<double>();
-
-            foreach (var token in postfix)
-            {
-                if (double.TryParse(token, out double number))
-                {
-                    stack.Push(number);
-                }
-                else
-                {
-                    var b = stack.Pop();
-                    var a = stack.Pop();
-
-                    stack.Push(token switch
-                    {
-                        "+" => a + b,
-                        "-" => a - b,
-                        "*" => a * b,
-                        "/" => b != 0 ? a / b : throw new DivideByZeroException("Деление на ноль."),
-                        _ => throw new InvalidOperationException($"Неизвестная операция: {token}")
-                    });
-                }
-            }
-
-            return stack.Pop();
-        }
-
-        private List<string> Tokenize(string expression)
-        {
-            var tokens = new List<string>();
-            var currentToken = string.Empty;
-
-            foreach (var ch in expression)
-            {
-                if (char.IsWhiteSpace(ch)) continue;
-
-                if (char.IsDigit(ch) || ch == '.')
-                {
-                    currentToken += ch;
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(currentToken))
-                    {
-                        tokens.Add(currentToken);
-                        currentToken = string.Empty;
-                    }
-
-                    tokens.Add(ch.ToString());
-                }
-            }
-
-            if (!string.IsNullOrEmpty(currentToken))
-            {
-                tokens.Add(currentToken);
-            }
-
-            return tokens;
         }
     }
 }
