@@ -1,7 +1,7 @@
 ﻿// File: CalculatorTests.cs
 using Microsoft.VisualStudio.TestTools.UnitTesting; // Подключаем пространство имен калькулятора
 using System;
-
+using MyCalc2;
 namespace CalculatorApp.Tests
 {
     [TestClass]
@@ -18,7 +18,7 @@ namespace CalculatorApp.Tests
         [TestMethod]
         public void Calculate_Addition_ReturnsCorrectResult()
         {
-            string expression = "5+3";
+            string expression = "5 + 3";
 
             double result = calculator.Calculate(expression);
 
@@ -28,7 +28,7 @@ namespace CalculatorApp.Tests
         [TestMethod]
         public void Calculate_Subtraction_ReturnsCorrectResult()
         {
-            string expression = "10-4";
+            string expression = "10 - 4";
 
             double result = calculator.Calculate(expression);
 
@@ -38,7 +38,7 @@ namespace CalculatorApp.Tests
         [TestMethod]
         public void Calculate_Multiplication_ReturnsCorrectResult()
         {
-            string expression = "7*6";
+            string expression = "7 * 6";
 
             double result = calculator.Calculate(expression);
 
@@ -48,7 +48,7 @@ namespace CalculatorApp.Tests
         [TestMethod]
         public void Calculate_Division_ReturnsCorrectResult()
         {
-            string expression = "20/4";
+            string expression = "20 / 4";
 
             double result = calculator.Calculate(expression);
 
@@ -60,7 +60,7 @@ namespace CalculatorApp.Tests
         public void Calculate_DivisionByZero_ThrowsDivideByZeroException()
         {
             // Arrange
-            string expression = "10/0";
+            string expression = "10 / 0";
 
             // Act
             calculator.Calculate(expression);
