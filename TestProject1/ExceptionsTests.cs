@@ -43,12 +43,6 @@ namespace CalculatorApp.Tests
             calculator.Calculate("");
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void ExtraNumbers()
-        {
-            calculator.Calculate("2 3 + 4");
-        }
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]

@@ -16,8 +16,10 @@ namespace MyCalc2
             var currentToken = string.Empty;
             char? previousChar = null;
 
-            foreach (var ch in expression)
+            for (int i = 0; i < expression.Length; i++)
             {
+                var ch = expression[i];
+
                 if (char.IsWhiteSpace(ch))
                 {
                     if (!string.IsNullOrEmpty(currentToken))
@@ -31,7 +33,20 @@ namespace MyCalc2
 
                 if (char.IsDigit(ch) || ch == '.')
                 {
-                    currentToken += ch;
+                    // Проверяем, нужно ли вставить умножение перед текущей цифрой
+                    if (!string.IsNullOrEmpty(currentToken))
+                    {
+                        // Если currentToken не пустой, то продолжаем собирать число
+                        currentToken += ch;
+                    }
+                    else
+                    {
+                        if (NeedInsertMultiplication(tokens, ch))
+                        {
+                            tokens.Add("*");
+                        }
+                        currentToken += ch;
+                    }
                 }
                 else if (IsOperator(ch) || ch == '(' || ch == ')')
                 {
@@ -41,15 +56,13 @@ namespace MyCalc2
                         currentToken = string.Empty;
                     }
 
-                    // Обработка отрицательных чисел
-                    if (ch == '-' && (previousChar == null || previousChar == '(' || IsOperator(previousChar.Value)))
+                    // Проверка на необходимость вставки умножения
+                    if (NeedInsertMultiplication(tokens, ch))
                     {
-                        currentToken += ch; // Начало отрицательного числа
+                        tokens.Add("*");
                     }
-                    else
-                    {
-                        tokens.Add(ch.ToString());
-                    }
+
+                    tokens.Add(ch.ToString());
                 }
                 else
                 {
@@ -67,14 +80,27 @@ namespace MyCalc2
             return tokens;
         }
 
-        private bool IsNegativeSign(char currentChar, char? previousChar)
-        {
-            return currentChar == '-' && (previousChar == null || previousChar == '(' || IsOperator(previousChar.Value));
-        }
-
         private bool IsOperator(char ch)
         {
             return ch == '+' || ch == '-' || ch == '*' || ch == '/';
+        }
+
+        private bool NeedInsertMultiplication(List<string> tokens, char currentChar)
+        {
+            if (tokens.Count == 0)
+                return false;
+
+            var lastToken = tokens[^1];
+
+            bool lastTokenIsNumberOrClosingParenthesis = IsNumber(lastToken) || lastToken == ")";
+            bool currentCharIsOpeningParenthesisOrNumber = currentChar == '(' || char.IsDigit(currentChar);
+
+            return lastTokenIsNumberOrClosingParenthesis && currentCharIsOpeningParenthesisOrNumber;
+        }
+
+        private bool IsNumber(string token)
+        {
+            return double.TryParse(token, out _);
         }
     }
 }

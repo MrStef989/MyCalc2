@@ -47,12 +47,33 @@ namespace CalculatorApp.Tests
             Assert.AreEqual(20, result);
         }
         [TestMethod]
-        public void Should_HandleNestedParentheses()
+        public void NestedParentheses()
         {
             var calculator = new Calculator();
 
             var result = calculator.Calculate("2 * (3 + (4 - 1))");
             Assert.AreEqual(12, result);
+        }
+        [TestMethod]
+        public void MissingOperatorBetweenNumberAndParenthesis()
+        {
+            var calculator = new Calculator();
+            var result = calculator.Calculate("2(6 - (5 - 2)/3) / 4");
+            Assert.AreEqual(2.5, result);
+        }
+        [TestMethod]
+        public void MissingOperatorBetweenParenthesisAndNumber()
+        {
+            var calculator = new Calculator();
+            var result = calculator.Calculate("(2 + 3)4");
+            Assert.AreEqual(20, result);
+        }
+        [TestMethod]
+        public void MissingOperatorBetweenNumberAndNumber()
+        {
+            var calculator = new Calculator();
+            var result = calculator.Calculate("2 3 + 4");
+            Assert.AreEqual(10, result);
         }
     }
 }
